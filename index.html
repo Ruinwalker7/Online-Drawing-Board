@@ -1,33 +1,175 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8"> 
-        <link rel="stylesheet" type="text/css" href="style.css">
-        <title>JS画板</title>
-    </head>
-    <body>
-        <div id="topbar">
-            <div class="topbaritem" id="logo">Draw</div>
 
-            <div class="topbaritem dropdown">
-                <a href="#" class="dropbtn">文件</a>
-                <div class="dropdown-content">
-                    <a href="#">新建</a>
-                    <a href="#">保存</a>
-                    <a href="#">下载</a>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>JS画板</title>
+</head>
+
+<body>
+    <div id="topbar">
+        <div class="topbaritem" id="logo">Draw</div>
+
+        <div class="topbaritem dropdown">
+            <a href="#" class="dropbtn">文件</a>
+            <div class="dropdown-content">
+                <a href="#">新建</a>
+                <a href="#">保存</a>
+                <a href="#">下载</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="main">
+        <div id="leftbar">
+            <div class="leftitem">
+                <p>
+                    常用
+                </p>
+            </div>
+            <div class="toolslist">
+                <button title="移动图像">
+                    <img src="/resource/鼠标.png">
+                </button>
+                <button title="文字">
+                    <img  src="/resource/文字.svg">
+                </button>
+                <button title="橡皮擦">
+                    <img  src="/resource/橡皮.svg">
+                </button>
+                <button title="吸管">
+                    <img  src="/resource/吸管.svg">
+                </button>
+            </div>
+            <div class="leftitem">
+                <p>
+                    画笔
+                </p>
+            </div>
+            <div class="toolslist">
+                <button title="铅笔">
+                    <img src="/resource/铅笔.svg">
+                </button>
+
+            </div>
+
+            <div class="leftitem">
+                <p>
+                    形状
+                </p>
+            </div>
+            <div class="toolslist">
+                <button title="直线">
+                    <img  src="/resource/直线.svg">
+                </button>
+                <button title="矩形">
+                    <img  src="/resource/矩形.svg">
+
+                </button>
+                <button title="椭圆">
+                    <img  src="/resource/椭圆.svg">
+                </button>
+                <button title="圆">
+                    <img src="/resource/圆.svg">
+
+                </button>
+            </div>
+        </div>
+
+        <div id="broad">
+            <canvas id="draw">
+
+            </canvas>
+        </div>
+
+        <div id="rightbar">
+            <div class="rightitem">
+                <p>
+                    画布属性
+                </p>
+                <div class="broadtext">
+                    <div>
+                        画布宽度：
+                    </div>
+
+                    <div>
+                        500px
+                    </div>
+                </div>
+
+                <div class="broadtext">
+                    <div>
+                        画布高度：
+                    </div>
+
+                    <div>
+                        500px
+                    </div>
+                </div>
+
+                <div class="broadtext">
+                    <div>
+                        画布颜色：
+                    </div>
+                    <input class="color" type="color">
+
                 </div>
             </div>
 
-        </div>
-
-        <div id="main">
-            <div id="leftbar">
-
+            <div class="rightitem">
+                <p>
+                    工具
+                </p>
+                <div class="rightbtn">
+                    <button title="撤销">
+                        <img src="/resource/撤销.svg">
+                    </button>
+                    <button title="重做">
+                        <img src="/resource/重做.svg">
+                    </button>
+                    <button title="清除">
+                        <img  src="/resource/清楚.svg">
+                    </button>
+                    <button title="播放">
+                        <img src="/resource/播放.svg">
+                    </button>
+                </div>
             </div>
-            <div id="broad">
+            <div class="rightitem">
+                <p>
+                    画笔
+                </p>
+                <div class="broadtext">
+                    <div>
+                        大小：
+                    </div>
 
+                    <input type="range" min="0" max="300" value="2" />
+                </div>
+                <div class="broadtext">
+                    <div>
+                        透明度：
+                    </div>
+
+                    <input type="range" min="0" max="100" value="100" />
+                </div>
+            </div>
+            <div class="rightitem">
+                <p>
+                    颜色
+                </p>
+                <div class="broadtext">
+                    <div>
+                        颜色：
+                    </div>
+                    <input class="color" type="color">
+                </div>
             </div>
         </div>
+    </div>
 
-    </body>
+</body>
+
 </html>
