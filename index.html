@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="style.css">
+    <script ref="reference" src="script.js"></script>
     <title>JS画板</title>
 </head>
 
@@ -12,11 +13,11 @@
         <div class="topbaritem" id="logo">Draw</div>
 
         <div class="topbaritem dropdown">
-            <a href="#" class="dropbtn">文件</a>
+            <a class="dropbtn">文件</a>
             <div class="dropdown-content">
-                <a href="#">新建</a>
-                <a href="#">保存</a>
-                <a href="#">下载</a>
+                <a id="build">新建</a>
+                <a id="save">保存</a>
+                <a id="download">下载</a>
             </div>
         </div>
 
@@ -30,16 +31,16 @@
                 </p>
             </div>
             <div class="toolslist">
-                <button title="移动图像">
+                <button class="leftbtn" title="移动图像">
                     <img src="/resource/鼠标.png">
                 </button>
-                <button title="文字">
+                <button class="leftbtn" title="文字">
                     <img  src="/resource/文字.svg">
                 </button>
-                <button title="橡皮擦">
+                <button class="leftbtn" title="橡皮擦">
                     <img  src="/resource/橡皮.svg">
                 </button>
-                <button title="吸管">
+                <button class="leftbtn" title="吸管">
                     <img  src="/resource/吸管.svg">
                 </button>
             </div>
@@ -49,7 +50,7 @@
                 </p>
             </div>
             <div class="toolslist">
-                <button title="铅笔">
+                <button class="leftbtn" title="铅笔">
                     <img src="/resource/铅笔.svg">
                 </button>
 
@@ -61,25 +62,23 @@
                 </p>
             </div>
             <div class="toolslist">
-                <button title="直线">
+                <button class="leftbtn" title="直线">
                     <img  src="/resource/直线.svg">
                 </button>
-                <button title="矩形">
+                <button class="leftbtn" title="矩形">
                     <img  src="/resource/矩形.svg">
-
                 </button>
-                <button title="椭圆">
+                <button class="leftbtn" title="椭圆">
                     <img  src="/resource/椭圆.svg">
                 </button>
-                <button title="圆">
+                <button class="leftbtn" title="圆">
                     <img src="/resource/圆.svg">
-
                 </button>
             </div>
         </div>
 
         <div id="broad">
-            <canvas id="draw">
+            <canvas width="500" height="500" id="draw">
 
             </canvas>
         </div>

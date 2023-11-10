@@ -72,6 +72,7 @@ ul {
 /* 下拉菜单设置样式 */
 
 .dropdown-content {
+    color: #777;
     /* 隐藏菜单 */
     display: none;
     position: absolute;
@@ -84,7 +85,7 @@ ul {
 
 .dropdown-content a {
     display: block;
-    color: black;
+    color: #777;
     padding: 12px 16px;
     text-decoration: none;
 }
@@ -174,9 +175,6 @@ ul {
 }
 
 #draw {
-    width: 500px;
-    height: 500px;
-    background-color: #ffffff;
     margin: 40px;
     border-radius: 5px;
     box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.2);
@@ -252,6 +250,6 @@ input {
     border: 0;
 }
 
-button:active {
-    background-color: #777;
+.rightbtn button:active {
+    background-color: #f1f1f1;
 }
