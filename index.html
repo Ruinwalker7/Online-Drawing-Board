@@ -9,19 +9,46 @@
 </head>
 
 <body>
+    <div id="overlay">
+        <div class="popup">
+            <p class="popup_title">创建画板</p>
+
+            <div class="popup_content">
+                <div class="popup_content_div">
+                    宽度(px)
+                    <input id="broadWidth" type="number" value=500 min="1" oninput="if(value>1500)value=1500;if(value.length>4)value=value.slice(0,4);if(value<=0)value=1">
+                </div>
+                <div class="popup_content_div">
+                    高度(px)
+                    <input id="broadHeight" type="number" value=500 min="1" oninput="if(value>1500)value=1500;if(value.length>4)value=value.slice(0,4);if(value<=0)value=1" />
+                </div>
+                <div class="popup_btn">
+                    <button id="cancelBtn" onclick="hidePopup()">取消</button>
+                    <button id="confirmBtn">确认</button>
+                </div>
+            </div>
+
+
+            <!-- <p class="popup_content">学会制作弹出框了吗？</p> -->
+
+        </div>
+    </div>
+
     <div id="topbar">
         <div class="topbaritem" id="logo">Draw</div>
 
         <div class="topbaritem dropdown">
             <a class="dropbtn">文件</a>
             <div class="dropdown-content">
-                <a id="build">新建</a>
+                <a id="build showPopup" onclick="showPopup()">新建</a>
                 <a id="save">保存</a>
-                <a id="download">下载</a>
+                <a id="download" onclick="downloadCanvas()">下载</a>
             </div>
         </div>
-
     </div>
+
+
+
 
     <div id="main">
         <div id="leftbar">
@@ -78,9 +105,8 @@
         </div>
 
         <div id="broad">
-            <canvas width="500" height="500" id="draw">
-
-            </canvas>
+            <canvas width="500" height="500" id="draw"></canvas>
+            <canvas id="tempCanvas" width="500" height="500"></canvas>
         </div>
 
         <div id="rightbar">
@@ -93,7 +119,7 @@
                         画布宽度：
                     </div>
 
-                    <div>
+                    <div id="wtext">
                         500px
                     </div>
                 </div>
@@ -103,7 +129,7 @@
                         画布高度：
                     </div>
 
-                    <div>
+                    <div id="htext">
                         500px
                     </div>
                 </div>
@@ -112,7 +138,7 @@
                     <div>
                         画布颜色：
                     </div>
-                    <input class="color" type="color">
+                    <input class="color backgroundColor" type="color" value="#ffffff">
 
                 </div>
             </div>
@@ -121,17 +147,17 @@
                 <p>
                     工具
                 </p>
-                <div class="rightbtn">
+                <div class="rightbtn" onclick="ClearAll()">
                     <button title="撤销">
                         <img src="/resource/撤销.svg">
                     </button>
                     <button title="重做">
                         <img src="/resource/重做.svg">
                     </button>
-                    <button title="清除">
+                    <button title="清除" onclick="ClearAll()">
                         <img  src="/resource/清楚.svg">
                     </button>
-                    <button title="播放">
+                    <button title="播放" onclick="ClearAll()">
                         <img src="/resource/播放.svg">
                     </button>
                 </div>
@@ -145,14 +171,14 @@
                         大小：
                     </div>
 
-                    <input type="range" min="0" max="300" value="2" />
+                    <input id="linewidth" type="range" min="1" max="300" value="1" />
                 </div>
                 <div class="broadtext">
                     <div>
                         透明度：
                     </div>
 
-                    <input type="range" min="0" max="100" value="100" />
+                    <input id="alpha" type="range" min="0" max="100" value="100" />
                 </div>
             </div>
             <div class="rightitem">
