@@ -190,7 +190,7 @@ canvas {
 
 #tempCanvas {
     position: relative;
-    top: -585px;
+    /* top: -585px; */
 }
 
 .rightitem {

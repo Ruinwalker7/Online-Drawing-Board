@@ -105,7 +105,7 @@
         </div>
 
         <div id="broad">
-            <canvas width="500" height="500" id="draw"></canvas>
+            <canvas id="draw" width="500" height="500"></canvas>
             <canvas id="tempCanvas" width="500" height="500"></canvas>
         </div>
 
@@ -147,11 +147,11 @@
                 <p>
                     工具
                 </p>
-                <div class="rightbtn" onclick="ClearAll()">
-                    <button title="撤销">
+                <div class="rightbtn">
+                    <button onclick="back1()" title="撤销">
                         <img src="/resource/撤销.svg">
                     </button>
-                    <button title="重做">
+                    <button onclick="redo()" title="重做">
                         <img src="/resource/重做.svg">
                     </button>
                     <button title="清除" onclick="ClearAll()">
@@ -189,7 +189,7 @@
                     <div>
                         颜色：
                     </div>
-                    <input class="color" type="color">
+                    <input id="pencolor" class="color" type="color">
                 </div>
             </div>
         </div>
