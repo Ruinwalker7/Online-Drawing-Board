@@ -157,7 +157,7 @@
                     <button title="清除" onclick="ClearAll()">
                         <img  src="/resource/清楚.svg">
                     </button>
-                    <button title="播放" onclick="ClearAll()">
+                    <button title="播放" onclick="redraw()">
                         <img src="/resource/播放.svg">
                     </button>
                 </div>
@@ -191,9 +191,23 @@
                     </div>
                     <input id="pencolor" class="color" type="color">
                 </div>
+
+                <div class="broadtext" style="padding-bottom:10px">
+                    <div>
+                        渐变：
+                    </div>
+                    <input id="pencolor1" class="color" type="color" value="#000000">
+                    <input id="pencolor2" class="color" type="color" value="#ffffff"> 开启：
+                    <label class="switch" width="10px">
+                        <input id="isopened" type="checkbox">
+                        <div class="slider" style="width:60px"></div>
+                    </label>
+
+                </div>
+
+
             </div>
         </div>
-    </div>
 
 </body>
 
