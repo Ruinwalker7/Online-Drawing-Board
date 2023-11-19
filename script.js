@@ -186,8 +186,7 @@ window.onload = function() {
     tempCanvas = document.getElementById('tempCanvas');
     tempCtx = tempCanvas.getContext('2d', true);
 
-    ctx.getImageData(0, 0, width, height)
-    ctx.getImageData(0, 0, width, height)
+
     historys.push(ctx.getImageData(0, 0, width, height));
     lastCanvas = ctx.getImageData(0, 0, width, height);
     setPaperLocation();
@@ -198,6 +197,9 @@ window.onload = function() {
             startX = e.clientX - tempCanvas.getBoundingClientRect().left;
             startY = e.clientY - tempCanvas.getBoundingClientRect().top;
             lastCanvas = ctx.getImageData(0, 0, width, height);
+            // if (tool == STATUS.LINE) {
+            //     tempCtx.beginPath();
+            // }
         }
     }
 
@@ -230,37 +232,74 @@ window.onload = function() {
             console.log(1)
             ctx.putImageData(lastCanvas, endX - startX, endY - startY);
         } else if (tool == STATUS.PENCIL) {
-            console.log(21)
+
             if (!drawing || redrawing)
                 return;
             setColor();
             // 绘制直线
+
             endX = e.clientX - tempCanvas.getBoundingClientRect().left;
             endY = e.clientY - tempCanvas.getBoundingClientRect().top;
+            tempCtx.lineCap = "butt"
+            tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height); // 清除画布
+            tempCtx.beginPath();
             tempCtx.lineWidth = linewidth;
             tempCtx.globalAlpha = alphe / 100;
+            tempCtx.moveTo(startX, startY);
+            tempCtx.lineTo(endX, endY);
+            tempCtx.stroke();
+            tempCtx.globalAlpha = alphe / 100;
+
+            tempCtx.arc(endX, endY, linewidth / 2, 0, Math.PI * 2);
+            tempCtx.fill();
+            tempCtx.closePath();
+            // tempCtx.closePath();
+            ctx.drawImage(tempCanvas, 0, 0)
+            startX = e.clientX - tempCanvas.getBoundingClientRect().left;
+            startY = e.clientY - tempCanvas.getBoundingClientRect().top;
+            // tempCtx.beginPath();
+            drawEvent.push(ctx.getImageData(0, 0, width, height))
+        } else if (tool == STATUS.RUBBER) {
+            if (!drawing || redrawing)
+                return;
+            endX = e.clientX - tempCanvas.getBoundingClientRect().left;
+            endY = e.clientY - tempCanvas.getBoundingClientRect().top;
+            ctx.clearRect(endX - linewidth / 2, endY - linewidth / 2, linewidth, linewidth); // 清除画布
+            drawEvent.push(ctx.getImageData(0, 0, width, height))
+        } else if (tool == STATUS.RECT) {
+            if (!drawing || redrawing)
+                return;
+            endX = e.clientX - tempCanvas.getBoundingClientRect().left;
+            endY = e.clientY - tempCanvas.getBoundingClientRect().top;
+            setColor();
+            // 绘制直线
+            tempCtx.lineWidth = linewidth;
+            tempCtx.globalAlpha = alphe / 100;
+            tempCtx.lineCap = "round"
             tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height); // 清除画布
+            tempCtx.putImageData(lastCanvas, 0, 0)
             tempCtx.beginPath();
             tempCtx.moveTo(startX, startY);
             tempCtx.lineTo(endX, endY);
             tempCtx.stroke();
-            ctx.drawImage(tempCanvas, 0, 0)
-            startX = e.clientX - tempCanvas.getBoundingClientRect().left;
-            startY = e.clientY - tempCanvas.getBoundingClientRect().top;
-            drawEvent.push(ctx.getImageData(0, 0, width, height))
-        }
-    };
+            // ctx.putImageData(lastCanvas, 0, 0)
+            // ctx.drawImage(tempCanvas, 0, 0)
+            drawEvent.push(tempCtx.getImageData(0, 0, width, height))
+        };
+    }
 
     tempCanvas.onmouseup = () => {
         drawing = false;
         ctx.drawImage(tempCanvas, 0, 0)
         tempCtx.clearRect(0, 0, width, height); // 清除画布
+        tempCtx.closePath();
         drawnew();
     };
 
 
     function setColor() {
         if (!IsmixedColor.checked) {
+            console.log(fillcolor)
             tempCtx.fillStyle = fillcolor
             tempCtx.strokeStyle = fillcolor
 
@@ -268,7 +307,7 @@ window.onload = function() {
             if (tool == !STATUS.PENCIL)
                 linearGradient = tempCtx.createLinearGradient(startX, startY, endX, endY);
             else
-                linearGradient = tempCtx.createLinearGradient(0, 0, width, hei);
+                linearGradient = tempCtx.createLinearGradient(0, 0, width, height);
 
             linearGradient.addColorStop(0, color1)
             linearGradient.addColorStop(1, color2)
