@@ -41,7 +41,6 @@
             <a class="dropbtn">文件</a>
             <div class="dropdown-content">
                 <a id="build showPopup" onclick="showPopup()">新建</a>
-                <a id="save">保存</a>
                 <a id="download" onclick="downloadCanvas()">下载</a>
             </div>
         </div>
@@ -61,16 +60,15 @@
                 <button class="leftbtn" title="移动图像">
                     <img src="/resource/鼠标.png">
                 </button>
-                <button class="leftbtn" title="文字">
-                    <img  src="/resource/文字.svg">
-                </button>
                 <button class="leftbtn" title="橡皮擦">
                     <img  src="/resource/橡皮.svg">
                 </button>
                 <button class="leftbtn" title="铅笔">
                     <img src="/resource/铅笔.svg">
-                </button>
-
+                </button             >
+                <button class="leftbtn" title="荧光笔">
+                    <img src="/resource/荧光笔.svg">
+                </button >
             </div>
 
             <div class="toolslist">
@@ -165,7 +163,7 @@
                         大小：
                     </div>
 
-                    <input id="linewidth" type="range" min="1" max="300" value="1" />
+                    <input id="linewidth" type="range" min="1" max="80" value="1" />
                 </div>
                 <div class="broadtext">
                     <div>

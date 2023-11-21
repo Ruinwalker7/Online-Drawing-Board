@@ -8,7 +8,8 @@ const STATUS = {
     "LINE": 6,
     "RECT": 7,
     "OVAL": 8,
-    "CIRCLE": 9
+    "CIRCLE": 9,
+    "SHADOWPEN": 10
 }
 var width = 500,
     height = 500,
@@ -51,7 +52,7 @@ function hidePopup() {
     overlay.style.display = "none";
 }
 
-// 下载画布的函数
+// 下载画布
 function downloadCanvas() {
     tempCtx.fillStyle = bcolor
     tempCtx.fillRect(0, 0, width, height);
@@ -75,7 +76,6 @@ function downloadCanvas() {
 
     // 移除链接元素
     document.body.removeChild(link);
-
     tempCtx.clearRect(0, 0, width, height)
 }
 
@@ -96,6 +96,7 @@ function drawnew() {
         historys[historysLength] = ctx.getImageData(0, 0, width, height)
     }
 }
+
 // 撤回按键
 function back1() {
     if (historysLength <= 0)
@@ -131,11 +132,10 @@ function redraw() {
     redrawing = true;
     drawing = false;
     i = 0;
-    intervalID = setInterval(run, 5000 / drawEvent.length);
+    intervalID = setInterval(run, 2000 / drawEvent.length);
 }
 
 function run() {
-    console.log(i)
     if (i < drawEvent.length) {
         ctx.putImageData(drawEvent[i], 0, 0)
         i++
@@ -145,6 +145,7 @@ function run() {
     }
 
 }
+
 
 window.onload = function() {
     // 左边工具栏
@@ -175,16 +176,17 @@ window.onload = function() {
                 tool = STATUS.OVAL
             else if (i.title == "圆")
                 tool = STATUS.CIRCLE
-
+            else if (i.title == "荧光笔")
+                tool = STATUS.SHADOWPEN
         };
     }
 
     // 画布
     canvas = document.getElementById("draw"); // 得到DOM对象
-    ctx = canvas.getContext("2d", true); // 得到渲染上下文
+    ctx = canvas.getContext("2d", { willReadFrequently: true }); // 得到渲染上下文
 
     tempCanvas = document.getElementById('tempCanvas');
-    tempCtx = tempCanvas.getContext('2d', true);
+    tempCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
 
 
     historys.push(ctx.getImageData(0, 0, width, height));
@@ -197,103 +199,123 @@ window.onload = function() {
             startX = e.clientX - tempCanvas.getBoundingClientRect().left;
             startY = e.clientY - tempCanvas.getBoundingClientRect().top;
             lastCanvas = ctx.getImageData(0, 0, width, height);
-            // if (tool == STATUS.LINE) {
-            //     tempCtx.beginPath();
-            // }
+            save = 0
+            if (tool == STATUS.PENCIL || tool == STATUS.SHADOWPEN) {
+                ctx.beginPath()
+                ctx.lineJoin = "round"
+                ctx.lineCap = "round"
+                ctx.moveTo(startX, startY);
+            }
         }
     }
 
     tempCanvas.onmousemove = (e) => {
+        if (!drawing || redrawing)
+            return;
+        endX = e.clientX - tempCanvas.getBoundingClientRect().left;
+        endY = e.clientY - tempCanvas.getBoundingClientRect().top;
+        ctx.shadowBlur = 0;
+        setColor();
         if (tool == STATUS.LINE) {
-            if (!drawing || redrawing)
-                return;
-            endX = e.clientX - tempCanvas.getBoundingClientRect().left;
-            endY = e.clientY - tempCanvas.getBoundingClientRect().top;
-            setColor();
             // 绘制直线
             tempCtx.lineWidth = linewidth;
             tempCtx.globalAlpha = alphe / 100;
-            tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height); // 清除画布
+            tempCtx.clearRect(0, 0, width, height); // 清除画布
             tempCtx.putImageData(lastCanvas, 0, 0)
             tempCtx.beginPath();
             tempCtx.moveTo(startX, startY);
             tempCtx.lineTo(endX, endY);
             tempCtx.stroke();
-            // ctx.putImageData(lastCanvas, 0, 0)
-            // ctx.drawImage(tempCanvas, 0, 0)
-            drawEvent.push(tempCtx.getImageData(0, 0, width, height))
-        } else if (tool == STATUS.MOVE) {
-            if (!drawing || redrawing)
-                return;
-            endX = e.clientX - tempCanvas.getBoundingClientRect().left;
-            endY = e.clientY - tempCanvas.getBoundingClientRect().top;
-            ctx.clearRect(0, 0, width, height)
-
-            console.log(1)
-            ctx.putImageData(lastCanvas, endX - startX, endY - startY);
-        } else if (tool == STATUS.PENCIL) {
-
-            if (!drawing || redrawing)
-                return;
-            setColor();
-            // 绘制直线
-
-            endX = e.clientX - tempCanvas.getBoundingClientRect().left;
-            endY = e.clientY - tempCanvas.getBoundingClientRect().top;
-            tempCtx.lineCap = "butt"
-            tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height); // 清除画布
-            tempCtx.beginPath();
-            tempCtx.lineWidth = linewidth;
-            tempCtx.globalAlpha = alphe / 100;
-            tempCtx.moveTo(startX, startY);
-            tempCtx.lineTo(endX, endY);
-            tempCtx.stroke();
-            tempCtx.globalAlpha = alphe / 100;
-
-            tempCtx.arc(endX, endY, linewidth / 2, 0, Math.PI * 2);
-            tempCtx.fill();
             tempCtx.closePath();
-            // tempCtx.closePath();
-            ctx.drawImage(tempCanvas, 0, 0)
-            startX = e.clientX - tempCanvas.getBoundingClientRect().left;
-            startY = e.clientY - tempCanvas.getBoundingClientRect().top;
-            // tempCtx.beginPath();
-            drawEvent.push(ctx.getImageData(0, 0, width, height))
+            if (save % 7 == 0)
+                drawEvent.push(tempCtx.getImageData(0, 0, width, height))
+            save++
+        } else if (tool == STATUS.MOVE) {
+            ctx.clearRect(0, 0, width, height)
+            ctx.putImageData(lastCanvas, endX - startX, endY - startY);
+            if (save % 7 == 0)
+                drawEvent.push(ctx.getImageData(0, 0, width, height))
+            save++
+        } else if (tool == STATUS.PENCIL) {
+            ctx.shadowColor = fillcolor
+            ctx.shadowBlur = 2;
+            // 绘制直线
+            ctx.putImageData(lastCanvas, 0, 0)
+            ctx.lineWidth = linewidth;
+            ctx.globalAlpha = alphe / 100;
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+            if (save % 7 == 0)
+                drawEvent.push(ctx.getImageData(0, 0, width, height))
+            save++;
+        } else if (tool == STATUS.SHADOWPEN) {
+            ctx.shadowColor = fillcolor
+            ctx.shadowBlur = 10;
+            // 绘制直线
+            ctx.putImageData(lastCanvas, 0, 0)
+            ctx.lineWidth = linewidth;
+            ctx.globalAlpha = alphe / 100;
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+            if (save % 7 == 0)
+                drawEvent.push(ctx.getImageData(0, 0, width, height))
+            save++;
         } else if (tool == STATUS.RUBBER) {
-            if (!drawing || redrawing)
-                return;
-            endX = e.clientX - tempCanvas.getBoundingClientRect().left;
-            endY = e.clientY - tempCanvas.getBoundingClientRect().top;
             ctx.clearRect(endX - linewidth / 2, endY - linewidth / 2, linewidth, linewidth); // 清除画布
             drawEvent.push(ctx.getImageData(0, 0, width, height))
         } else if (tool == STATUS.RECT) {
-            if (!drawing || redrawing)
-                return;
-            endX = e.clientX - tempCanvas.getBoundingClientRect().left;
-            endY = e.clientY - tempCanvas.getBoundingClientRect().top;
-            setColor();
-            // 绘制直线
-            tempCtx.lineWidth = linewidth;
-            tempCtx.globalAlpha = alphe / 100;
-            tempCtx.lineCap = "round"
-            tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height); // 清除画布
-            tempCtx.putImageData(lastCanvas, 0, 0)
-            tempCtx.beginPath();
-            tempCtx.moveTo(startX, startY);
-            tempCtx.lineTo(endX, endY);
-            tempCtx.stroke();
-            // ctx.putImageData(lastCanvas, 0, 0)
-            // ctx.drawImage(tempCanvas, 0, 0)
-            drawEvent.push(tempCtx.getImageData(0, 0, width, height))
+            ctx.lineWidth = linewidth;
+            ctx.globalAlpha = alphe / 100;
+            ctx.putImageData(lastCanvas, 0, 0)
+            ctx.fillRect(startX, startY, endX - startX, endY - startY)
+            if (save % 7 == 0)
+                drawEvent.push(ctx.getImageData(0, 0, width, height))
+            save++;
+        } else if (tool == STATUS.OVAL) {
+            ctx.lineWidth = linewidth;
+            ctx.globalAlpha = alphe / 100;
+            ctx.putImageData(lastCanvas, 0, 0)
+            ctx.beginPath()
+            ctx.ellipse(startX, startY, Math.abs(endX - startX), Math.abs(endY - startY), 0, 0, Math.PI * 2)
+            ctx.fill()
+            ctx.closePath()
+            if (save % 7 == 0)
+                drawEvent.push(ctx.getImageData(0, 0, width, height))
+            save++;
+        } else if (tool == STATUS.CIRCLE) {
+            ctx.lineWidth = linewidth;
+            ctx.globalAlpha = alphe / 100;
+            ctx.putImageData(lastCanvas, 0, 0)
+            ctx.beginPath()
+            ctx.arc(startX, startY, Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2)), 0, Math.PI * 2)
+            ctx.fill()
+            ctx.closePath()
+            if (save % 7 == 0)
+                drawEvent.push(ctx.getImageData(0, 0, width, height))
+            save++;
         };
     }
 
+
+    document.getElementsByTagName("body")[0].onmouseup = () => {
+        if (drawing == true) {
+            drawing = false;
+            ctx.drawImage(tempCanvas, 0, 0)
+            tempCtx.clearRect(0, 0, width, height); // 清除画布
+            tempCtx.closePath();
+            drawnew();
+        }
+
+    };
+
     tempCanvas.onmouseup = () => {
-        drawing = false;
-        ctx.drawImage(tempCanvas, 0, 0)
-        tempCtx.clearRect(0, 0, width, height); // 清除画布
-        tempCtx.closePath();
-        drawnew();
+        if (drawing == true) {
+            drawing = false;
+            ctx.drawImage(tempCanvas, 0, 0)
+            tempCtx.clearRect(0, 0, width, height); // 清除画布
+            tempCtx.closePath();
+            drawnew();
+        }
     };
 
 
@@ -302,25 +324,28 @@ window.onload = function() {
             console.log(fillcolor)
             tempCtx.fillStyle = fillcolor
             tempCtx.strokeStyle = fillcolor
-
+            ctx.fillStyle = fillcolor
+            ctx.strokeStyle = fillcolor
         } else {
-            if (tool == !STATUS.PENCIL)
+            if (tool == STATUS.RECT) {
                 linearGradient = tempCtx.createLinearGradient(startX, startY, endX, endY);
-            else
+            } else if (tool == STATUS.PENCIL || tool == STATUS.SHADOWPEN)
                 linearGradient = tempCtx.createLinearGradient(0, 0, width, height);
-
+            else if (tool != STATUS.PENCIL)
+                linearGradient = tempCtx.createLinearGradient(startX, startY, endX, endY);
             linearGradient.addColorStop(0, color1)
             linearGradient.addColorStop(1, color2)
             tempCtx.fillStyle = linearGradient
             tempCtx.strokeStyle = linearGradient
+            ctx.fillStyle = linearGradient
+            ctx.strokeStyle = linearGradient
         }
     }
     var IsmixedColor = document.getElementById("isopened");
 
 
     // topbar
-    confirmBtn = document.getElementById("confirmBtn");
-    confirmBtn.onclick = (e) => {
+    document.getElementById("confirmBtn").onclick = (e) => {
         tempCtx.clearRect(0, 0, width, height); // 清除画布
         ctx.clearRect(0, 0, width, height); // 清除画布
         w = document.getElementById("broadWidth")
@@ -337,37 +362,37 @@ window.onload = function() {
         cleanHistory()
     }
 
-    // rightbar
-    var bcol = document.getElementsByClassName("backgroundColor")
-    for (let i of bcol) {
-        i.addEventListener("change", watchColorPicker, false);
-        i.addEventListener("input", watchColorPicker, false);
-    }
-
-    var pcol = document.getElementById("pencolor")
-    pcol.addEventListener("change", watchPanColor, false);
-    pcol.addEventListener("input", watchPanColor, false);
 
     // 改变笔的颜色
+    document.getElementById("pencolor").addEventListener("change", watchPanColor, false);
+    document.getElementById("pencolor").addEventListener("input", watchPanColor, false);
+
     function watchPanColor(event) {
         tempCtx.strokeStyle = event.target.value;
         tempCtx.fillStyle = event.target.value;
         fillcolor = event.target.value;
     }
 
-    linewidthinput = document.getElementById("linewidth")
-    linewidthinput.addEventListener("input", changepan, false)
+    // 线宽
+    document.getElementById("linewidth").addEventListener("input", changepan, false)
 
-    function changepan() {
-        linewidth = linewidthinput.value
+    function changepan(event) {
+        console.log
+        linewidth = event.target.value
     }
 
-    alphainput = document.getElementById("alpha")
-    alphainput.addEventListener("input", changealpha, false)
+    document.getElementById("alpha").addEventListener("input", changealpha, false)
 
     // 改变笔的透明度
-    function changealpha() {
-        alphe = alphainput.value
+    function changealpha(event) {
+        alphe = event.target.value
+    }
+
+    // rightbar
+    var bcol = document.getElementsByClassName("backgroundColor")
+    for (let i of bcol) {
+        i.addEventListener("change", watchColorPicker, false);
+        i.addEventListener("input", watchColorPicker, false);
     }
 
     // 背景颜色
@@ -388,12 +413,14 @@ window.onload = function() {
     })
 
 
-
+    // 设置缓冲画布和普通画布在一层
     function setPaperLocation() {
-        tempCanvas.top = -canvas.getBoundingClientRect()
-
+        console.log(canvas.getBoundingClientRect())
+        console.log(tempCanvas.getBoundingClientRect())
+        if (canvas.getBoundingClientRect().top == tempCanvas.getBoundingClientRect().top && canvas.getBoundingClientRect().left == tempCanvas.getBoundingClientRect().left)
+            return;
         if (canvas.getBoundingClientRect().top != tempCanvas.getBoundingClientRect().top) {
-            document.getElementById("tempCanvas").style.top = (-canvas.getBoundingClientRect().height - 85) + "px";
+            document.getElementById("tempCanvas").style.top = (-canvas.getBoundingClientRect().height - 84) + "px";
             document.getElementById("tempCanvas").style.left = 0
         } else {
             document.getElementById("tempCanvas").style.top = 0
@@ -402,7 +429,7 @@ window.onload = function() {
 
         if (canvas.getBoundingClientRect().left != tempCanvas.getBoundingClientRect().left) {
             document.getElementById("tempCanvas").style.top = 0
-            document.getElementById("tempCanvas").style.left = (-85 - canvas.getBoundingClientRect().width) + "px";
+            document.getElementById("tempCanvas").style.left = (-84 - canvas.getBoundingClientRect().width) + "px";
         } else {
             document.getElementById("tempCanvas").style.left = 0
         }
